@@ -8,13 +8,7 @@ param (
 
 $ErrorActionPreference = "Stop"
 
-class Params{
-    static $SystemPath = "C:\Users\jaign\Codes\TempsProjects\vhd-demo\temps\test.vhdx"
-    static $BootName = "TestBoot"
-}
-
-
-$efiPartition = Get-Partition | Where-Object { $_.Type -eq "System" }
+$efiPartition = Get-Partition | Where-Object { $_.Type -eq "System" -and ( $_ | Get-Volume ).FileSystem -eq "FAT32" }
 $efiPartition | Add-PartitionAccessPath -AssignDriveLetter
 $efiDriverLetter = (($efiPartition | Get-Partition).DriveLetter) + ":"
 

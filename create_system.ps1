@@ -5,6 +5,7 @@ param(
     [uint64]$Size = 20GB,
     [string]$Label = "OS",
     [string]$ISO = "D:\资源\其他\Win11_24H2_Chinese_Simplified_x64.iso",
+    [string]$DriverPath = "D:\资源\驱动\dismExportDrivers\",
     [string]$Version = "Windows 11 专业版"
 )
 
@@ -29,6 +30,12 @@ $installWim = Resolve-Path "$($volISO.DriveLetter):\sources\install.wim"
 $imgIdx = (Get-WindowsImage -ImagePath $installWim | where { $_.ImageName.Equals($Version) }).ImageIndex
 
 Expand-WindowsImage -ImagePath $installWim -ApplyPath $vhdxRoot -Index $imgIdx
+# 安装驱动
+if (Test-Path $DriverPath) {
+    $driverPath = Resolve-Path $DriverPath
+    $null = Add-WindowsDriver -Path $vhdxRoot -Driver $driverPath -Recurse
+}
+
 
 $null = $mntISO | Dismount-DiskImage
 Dismount-VHD -Path $vhdx.Path
